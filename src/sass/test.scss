@@ -1,0 +1,306 @@
+
+// cc created at 2015-7-10
+
+$width: 20px; // 共有变量
+$nav-color: #f90;
+
+nav{
+	$width: 100px; // 私有变量
+	width: $width;
+	color: $nav-color;
+}
+
+box {
+	width: $width;
+}
+
+$highlight-color: #f90;
+$highlight-border: 1px solid $highlight-color;
+
+.selected{
+	border: $highlight-border;
+}
+
+.selected2 {
+	border: $highlight_border; 
+	// 注意变量命名，中划线和下划线实际上指向同一个变量
+}
+
+/*
+#content article h1 { 
+	color: #333 
+}
+
+#content article p {
+	margin-bottom: 1.4em
+}
+
+#content aside {
+	background: #eee
+}
+*/
+
+#content {
+	article {
+		h1 {
+			color: #333
+		}
+		p {
+			margin-bottom: 1.4em
+		}
+	}
+
+	aside {
+		background: #eee;
+	}
+}
+
+#content-a {
+	background: #f5f5f5;
+	aside {
+		background: #eee
+	}
+}
+
+
+// 父选择器 &
+article a {
+	color: blue;
+	:hover {color:red} // 这样会多一个 空格，导致所有子元素都会有 hover 效果了
+}
+
+article2 a {
+	color: blue;
+	&:hover {color: red}
+}
+
+#content aside {
+	color: red;
+	body.ie & { color: green }
+}
+
+// 群组选择器的嵌套, 这个和 css一样的规则
+$btn-margin: 10px;
+.button, button {
+	margin: $btn-margin; // 会自动帮忙
+}
+
+// css的写法
+.container h1, .container h2, .container h3 {
+	margin-bottom: .8em;
+}
+
+// sass
+.container {
+	h1, h2, h3 {
+		margin-bottom: .8em
+	}
+}
+
+// 花样繁多
+nav, aside {
+	a {
+		color: blue
+	}
+}
+
+// css 写法
+
+// article section {
+// 	margin: 5px
+// }
+// article > section {
+// 	border: 1px solid #ccc
+// }
+
+// header + p {
+// 	font-size: 1.1em
+// }
+
+// article ~ article {
+// 	border-top: 1px dashed #ccc
+// }
+
+// sass
+article {
+	~ article {border-top: 1px dashed #ccc}
+	> section { background:#eee }
+	dl > {
+		dt {color: #333}
+		dd {color: #555}
+	}
+	nav + & {margin-top: 0}
+}
+
+// 嵌套属性,这个比较实用,其实也不是很实用
+// nav { border: 1px solid #ccc} 比较好
+nav {
+	border: {
+		style: solid;
+		width: 1px;
+		color: #ccc;
+	}
+}
+
+nav {
+	border: 1px solid #ccc {
+		left: 0px;
+		right: 0px
+	}
+}
+
+// 导入sass文件 @import， 可以省略 .sass, .scss 后缀名，分块合作的时候比较好用
+$link-color: blue;
+$link-color:red;
+a {
+	color: $link-color; // 后面的变量名会覆盖前面的
+}
+
+// 可以使用 !default, 类似于!important 
+// 的对立面，即默认值，如果有新的值就会用新的值，如果没有就用这个默认值
+
+$fancybox-width: 400px!default;
+
+.fancybox {
+	$fancybox-width: 200px; // 类似于js中的局部变量不？
+	width: $fancybox-width;
+}
+
+.fancybox-2 {
+	width: $fancybox-width;
+}
+
+.blue-theme {
+	aside{
+		background: blue;
+		color: red;
+		font: 20px;
+	}
+}
+
+
+// 混合器, 一堆样式包裹到一个变量里面，类似于对象？
+@mixin rounded-corners {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.notice {
+	background-color: green;
+	border: 1px solid #00aa00;
+	@include rounded-corners;
+}
+.alert{
+	background: red;
+	@include rounded-corners;
+}
+
+
+// 混合器中的 css规则
+@mixin no-bullets {
+	list-style: none;
+	li {
+		list-style-image: none;
+		list-style-type: none;
+		margin-left: 0;
+	}
+}
+
+ul.plain {
+	color: #444;
+	@include no-bullets;
+}
+
+
+// 混合器甚至可以传递参数的，吊
+@mixin link-colors($normal, $hover, $visited) {
+	color: $normal;
+	&:hover {color: $hover;}
+	&:visited {color: $visited;}
+}
+
+a {
+	@include link-colors(blue, red, green)
+}
+
+// 居然还允许传递变量当参数
+a{
+	@include link-colors(
+		$normal: blue,
+		$visited: green,
+		$hover: red
+	)
+}
+
+@mixin link-colors($normal, $hover: $normal, $visited: $normal){
+	color: $normal;
+	&:hover { color: $hover; }
+	&:visited { color: $visited; }
+}
+
+@mixin hel{
+	overflow: hidden;
+	resize: vertical;
+	color: red;
+}
+.btn {
+	@include hel;
+	color: green; 
+	// 在编译的时候并不会帮忙把重复的给去掉啊蛋疼，需要压缩一下的
+}
+
+
+// 使用选择器继承,其实就是共享之前的css属性而已啦,编译的时候会在 @extend 
+// .class 之后加这个类而已  .error, .seriousError
+.error {
+	border: 1px red;
+	background: #fdf - 100;
+}
+.seriousError {
+	@extend .btn;
+	@extend .error;
+	border-width: 3px + 10px
+}
+
+.error a {
+	color: red;
+	font-weight: 100
+}
+h1.error {
+	font-size: 1.2rem
+}
+
+.disabled {
+	color: gray;
+	@extend a
+}
+
+$color-stack:
+	(group: orange, id: normal, color: #e67835),
+	(group: orange, id: pale, color: #f8a878),
+	(group: orange, id: dark, color: #ad490c),
+	(group: blue, id: normal, color: #426682);
+	
+// color function
+@function color($group, $shade: normal, $transparency: 1){
+	@each $color in $color-stack{
+		$c-group: map-get($color, group);
+		$c-shade: map-get($color, id);
+		@if($group == map-get($color, group) and $shade == map-get($color, id)) {
+			@return rgba(map-get($color, color), $transparency);
+		}
+	}
+}
+
+body {
+	color: color(blue, normal, .8)
+}
+p {
+	color: color(orange)
+}
+blockquote {
+	color: color(blue);
+	background: color(orange, pale, .4);
+	border-color: color(orange, dark)
+}
